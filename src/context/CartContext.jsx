@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./AuthContext";
 import axios from "axios";
+import { API_URL } from '../config/constants';
 
 const CartContext = createContext();
 
@@ -41,7 +42,7 @@ export const CartProvider = ({ children }) => {
     
     try {
       setIsLoading(true);
-      const response = await axios.get(`http://localhost:5005/api/cart/${user.id}`);
+      const response = await axios.get(`${API_URL}/api/cart/${user.id}`);
      
       
       if (response.data.cart && response.data.cart.length > 0) {
@@ -65,7 +66,7 @@ export const CartProvider = ({ children }) => {
     if (!user?.id) return;
     
     try {
-      await axios.post(`http://localhost:5005/api/cart/${user.id}`, {
+      await axios.post(`${API_URL}/api/cart/${user.id}`, {
         cart: cartItems,
       });
   

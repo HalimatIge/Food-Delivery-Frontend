@@ -1,23 +1,15 @@
-// import { Navigate } from "react-router-dom";
 
-// export default function ProtectedRoute({ isAuthenticated, children }) {
-//   if (!isAuthenticated) {
-//     return <Navigate to="/login" />;
-//   }
-//   return children;
-// }
-
-// utils/ProtectedRoute.jsx
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import axios from "axios";
+import { API_URL } from '../config/constants';
 
 const ProtectedRoute = ({ children }) => {
   const [checking, setChecking] = useState(true);
   const [valid, setValid] = useState(false);
 
   useEffect(() => {
-    axios.get("http://localhost:5005/api/auth/dashboard", {
+    axios.get(`${API_URL}/api/auth/dashboard`, {
       withCredentials: true,
     }).then((res) => {
       if (res.data.status) {

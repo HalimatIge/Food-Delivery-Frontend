@@ -1,5 +1,6 @@
 import { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
+import { API_URL } from '../config/constants';
 
 const AuthContext = createContext();
 
@@ -24,7 +25,7 @@ export const AuthProvider = ({ children }) => {
 const checkAuthStatus = async () => {
   try {
     
-    const response = await axios.get('http://localhost:5005/api/auth/me', {
+    const response = await axios.get(`${API_URL}/api/auth/me`, {
       withCredentials: true,
     });
     
@@ -49,7 +50,7 @@ const checkAuthStatus = async () => {
   const login = async (email, password) => {
     try {
       const response = await axios.post(
-        'http://localhost:5005/api/auth/signin',
+        `${API_URL}/api/auth/signin`,
         { email, password },
         { withCredentials: true }
       );
@@ -73,7 +74,7 @@ const checkAuthStatus = async () => {
 
   const logout = async () => {
     try {
-      await axios.post('http://localhost:5005/api/auth/logout', {}, {
+      await axios.post(`${API_URL}/api/auth/logout`, {}, {
         withCredentials: true,
       });
     
