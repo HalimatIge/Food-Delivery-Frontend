@@ -59,6 +59,11 @@ const checkAuthStatus = async () => {
 
       if (response.data.success) {
         setUser(response.data.user);
+
+      //    if (response.data.token) {
+      //   localStorage.setItem('token', response.data.token);
+      // }
+
         return { success: true, user: response.data.user };
       } else {
         return { success: false, message: response.data.message };
