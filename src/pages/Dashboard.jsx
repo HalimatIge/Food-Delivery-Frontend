@@ -39,7 +39,7 @@ const Dashboard = () => {
       const fetchFood = async () => {
         setLoading(true);
         try {
-          const endpoint = `${API_URL}/api/foodItems?category=${category}&page=${page}&sort=${sort}&order=${order}&search=${search},`;
+          const endpoint = `${API_URL}/api/foodItems?category=${category}&page=${page}&sort=${sort}&order=${order}&search=${search}`;
           const res = await axios.get(endpoint,
             {
   withCredentials: true,
