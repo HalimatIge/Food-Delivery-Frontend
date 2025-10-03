@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../config/axios";
 import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom"; 
@@ -18,7 +18,13 @@ const [selectedOrderId, setSelectedOrderId] = useState(null);
     const userId = user?.id || user?._id;
     if (userId) {
       console.log("🔄 Fetching orders for user ID:", userId); // Debug log
-      axios.get(`${API_URL}/api/orders/${userId}`)
+      // axios.get(`${API_URL}/api/orders/${userId}`)
+      axios.get(`${API_URL}/api/orders/${userId}`, {
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
         .then(res => {
            console.log("✅ Orders fetched:", res.data); // Debug log
           setOrders(res.data.data)
@@ -43,7 +49,13 @@ const [selectedOrderId, setSelectedOrderId] = useState(null);
 
 const confirmCancel = async () => {
   try {
-    const res = await axios.put(`${API_URL}/api/orders/${selectedOrderId}/cancel`);
+    // const res = await axios.put(`${API_URL}/api/orders/${selectedOrderId}/cancel`);
+    const res = await axios.put(`${API_URL}/api/orders/${selectedOrderId}/cancel`, {}, {
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
     setOrders((prev) =>
       prev.map((order) =>
         order._id === selectedOrderId ? { ...order, status: "Cancelled" } : order

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axios from "../config/axios";
 import {FiUser, FiMail, FiLock, FiEye, FiEyeOff, FiChevronLeft } from "react-icons/fi";
 import { useNavigate ,Link} from "react-router-dom";
 import { toast } from "react-toastify";
@@ -33,7 +33,14 @@ export default function ForgotPasswordPage() {
     try {
       setLoading(true);
       setError("");
-      await axios.post(`${API_URL}/api/auth/forgot-password/send-otp`, { email });
+      await axios.post(`${API_URL}/api/auth/forgot-password/send-otp`, { email },
+        {
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+}
+      );
       setStep("otp");
     } catch (err) {
       setError(err.response?.data?.message || "Failed to send OTP");
@@ -51,7 +58,12 @@ export default function ForgotPasswordPage() {
   const response = await axios.post(`${API_URL}/api/auth/verify-otp`, { 
       email, 
       otp: otpCode 
-    });
+    },{
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
     
     console.log('OTP Verification Response:', response.data);
       setStep("reset");
@@ -93,7 +105,14 @@ export default function ForgotPasswordPage() {
         email,
         otp: otpCode,
         newPassword: password,
-      });
+      },
+      {
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+}
+    );
        console.log('Reset Password Response:', res.data);
 
       if (res.data.success) {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../../config/axios";
 import { toast } from "react-toastify";
 import OrderDetailsModal from "../../component/OrderDetailsModal";
 import { API_URL } from '../../config/constants';
@@ -43,7 +43,13 @@ const AdminOrdersPage = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get(`${API_URL}/api/orders`);
+        // const response = await axios.get(`${API_URL}/api/orders`);
+        const response = await axios.get(`${API_URL}/api/orders`, {
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
         setOrders(response.data.data);
       } catch (err) {
         toast.error("Failed to fetch orders");
@@ -58,9 +64,18 @@ const AdminOrdersPage = () => {
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-      await axios.put(`${API_URL}/api/orders/${orderId}/status`, { 
-        status: newStatus 
-      });
+      // await axios.put(`${API_URL}/api/orders/${orderId}/status`, { 
+      //   status: newStatus 
+      // });
+      await axios.put(`${API_URL}/api/orders/${orderId}/status`, 
+  { status: newStatus },
+  {
+    withCredentials: true,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }
+);
       
       setOrders(prev =>
         prev.map(order =>

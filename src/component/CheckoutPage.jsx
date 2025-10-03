@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
-import axios from "axios";
+import axios from '../config/axios';
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import PageHeader from "./PageHeader";
@@ -72,7 +72,13 @@ const CheckoutPage = () => {
 
     console.log("📦 Sending order data:", orderData);
 
-    const response = await axios.post(`${API_URL}/api/orders`, orderData);
+    // const response = await axios.post(`${API_URL}/api/orders`, orderData);
+    const response = await axios.post(`${API_URL}/api/orders`, orderData, {
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
     
     // console.log("✅ Order response:", response.data);
 

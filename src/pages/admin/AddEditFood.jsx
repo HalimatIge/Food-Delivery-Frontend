@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import axios from 'axios';
+import axios from '../../config/axios';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { API_URL } from '../../config/constants';
@@ -46,9 +46,15 @@ const AddEditFood = () => {
   const fetchFoodItem = async () => {
     try {
       setIsLoading(true);
+      // const res = await axios.get(`${API_URL}/api/foodItems/${id}`, {
+      //   withCredentials: true,
+      // });
       const res = await axios.get(`${API_URL}/api/foodItems/${id}`, {
-        withCredentials: true,
-      });
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
 
       const food = res.data.foodItem;
       setForm({
@@ -167,9 +173,17 @@ const AddEditFood = () => {
       };
 
       if (id) {
-        await axios.put(`${API_URL}/api/foodItems/${id}`, formData, config);
+        // await axios.put(`${API_URL}/api/foodItems/${id}`, formData, config);
+        await axios.put(`${API_URL}/api/foodItems/${id}`, formData, {
+  ...config,
+  withCredentials: true
+});
       } else {
-        await axios.post(`${API_URL}/api/foodItems/add`, formData, config);
+        // await axios.post(`${API_URL}/api/foodItems/add`, formData, config);
+        await axios.post(`${API_URL}/api/foodItems/add`, formData, {
+  ...config,
+  withCredentials: true
+});
       }
 
       navigate('/admin/foods');

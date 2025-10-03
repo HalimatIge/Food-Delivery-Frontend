@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
+import axios from "../config/axios";
 import { FiUser, FiMail, FiLock, FiEye, FiEyeOff, FiChevronLeft } from "react-icons/fi";
 import { API_URL } from '../config/constants';
 export default function RegisterPage() {
@@ -39,7 +39,13 @@ const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>
     try {
       setLoading(true);
       setError("");
-      await axios.post(`${API_URL}/api/auth/send-otp`, { email });
+      // await axios.post(`${API_URL}/api/auth/send-otp`, { email });
+      await axios.post(`${API_URL}/api/auth/send-otp`, { email }, {
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
       setStep("otp");
     } catch (err) {
       setError(err.response?.data?.message || "Failed to send OTP");
@@ -53,7 +59,13 @@ const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>
       setLoading(true);
       setError("");
       const otpCode = otp.join('');
-      await axios.post(`${API_URL}/api/auth/verify-otp`, { email, otp: otpCode });
+      // await axios.post(`${API_URL}/api/auth/verify-otp`, { email, otp: otpCode });
+      await axios.post(`${API_URL}/api/auth/verify-otp`, { email, otp: otpCode }, {
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
       setStep("form");
     } catch (err) {
       setError(err.response?.data?.message || "Invalid OTP. Please try again.");
@@ -83,12 +95,21 @@ const handleRegister = async () => {
       lastname: formData.lastname
     });
 
-    const res = await axios.post(`${API_URL}/api/auth/register`, {
-      ...formData,
-      email,
-      otp: otpCode,
-    });
-
+    // const res = await axios.post(`${API_URL}/api/auth/register`, {
+    //   ...formData,
+    //   email,
+    //   otp: otpCode,
+    // });
+const res = await axios.post(`${API_URL}/api/auth/register`, {
+  ...formData,
+  email,
+  otp: otpCode,
+}, {
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
     console.log('Registration response:', res.data);
 
     

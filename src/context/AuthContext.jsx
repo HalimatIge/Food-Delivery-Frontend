@@ -1,5 +1,6 @@
 import { createContext, useState, useContext, useEffect } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
+import axios from '../config/axios';
 import { API_URL } from '../config/constants';
 
 const AuthContext = createContext();
@@ -25,11 +26,20 @@ export const AuthProvider = ({ children }) => {
 const checkAuthStatus = async () => {
   try {
     
-    const response = await axios.get(`${API_URL}/api/auth/me`, {
-      withCredentials: true,
-    });
-    
-  
+    // const response = await axios.get(
+    //   `${API_URL}/api/auth/me`, 
+    //   { withCredentials: true,
+    // });
+
+    const response = await axios.get(
+   `${API_URL}/api/auth/me`, 
+  { 
+    withCredentials: true,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }
+); 
     
     if (response.data.success) {
       setUser(response.data.user);
@@ -49,13 +59,21 @@ const checkAuthStatus = async () => {
 
   const login = async (email, password) => {
     try {
+      // const response = await axios.post(
+      //   `${API_URL}/api/auth/signin`,
+      //   { email, password },
+      //   { withCredentials: true }
+      // );
       const response = await axios.post(
-        `${API_URL}/api/auth/signin`,
-        { email, password },
-        { withCredentials: true }
-      );
-
-    
+  `${API_URL}/api/auth/signin`,
+  { email, password },
+  { 
+    withCredentials: true,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }
+);   
 
       if (response.data.success) {
         setUser(response.data.user);
@@ -79,9 +97,17 @@ const checkAuthStatus = async () => {
 
   const logout = async () => {
     try {
+      // await axios.post(`${API_URL}/api/auth/logout`, {}, {
+      //   withCredentials: true,
+      // });
+
       await axios.post(`${API_URL}/api/auth/logout`, {}, {
         withCredentials: true,
+        headers: {
+      'Content-Type': 'application/json'
+    }
       });
+    
     
     } catch (error) {
       console.error('Logout error:', error);

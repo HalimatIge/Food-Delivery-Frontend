@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../config/axios";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import FoodItemCard from "../component/FoodItemCard";
@@ -39,8 +39,15 @@ const Dashboard = () => {
       const fetchFood = async () => {
         setLoading(true);
         try {
-          const endpoint = `${API_URL}/api/foodItems?category=${category}&page=${page}&sort=${sort}&order=${order}&search=${search}`;
-          const res = await axios.get(endpoint);
+          const endpoint = `${API_URL}/api/foodItems?category=${category}&page=${page}&sort=${sort}&order=${order}&search=${search},`;
+          const res = await axios.get(endpoint,
+            {
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+}
+          );
           setFoodItems(res.data.foodItems || []);
           setTotalPages(res.data.totalPages || 1);
         } catch (err) {

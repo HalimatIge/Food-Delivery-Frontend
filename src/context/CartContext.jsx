@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./AuthContext";
-import axios from "axios";
+// import axios from "axios";
+import axios from '../config/axios';
 import { API_URL } from '../config/constants';
 
 const CartContext = createContext();
@@ -42,7 +43,14 @@ export const CartProvider = ({ children }) => {
     
     try {
       setIsLoading(true);
-      const response = await axios.get(`${API_URL}/api/cart/${user.id}`);
+      // const response = await axios.get(`${API_URL}/api/cart/${user.id}`);
+
+      const response = await axios.get(`${API_URL}/api/cart/${user.id}`, {
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
      
       
       if (response.data.cart && response.data.cart.length > 0) {
@@ -66,9 +74,18 @@ export const CartProvider = ({ children }) => {
     if (!user?.id) return;
     
     try {
+      // await axios.post(`${API_URL}/api/cart/${user.id}`, {
+      //   cart: cartItems,
+      // });
+
       await axios.post(`${API_URL}/api/cart/${user.id}`, {
-        cart: cartItems,
-      });
+  cart: cartItems,
+}, {
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
   
     } catch (error) {
       console.error("Failed to save cart to backend:", error);

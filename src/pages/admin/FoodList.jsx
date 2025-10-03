@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import axios from '../../config/axios';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { FiSearch, FiEdit, FiTrash2, FiPlus, FiEye, FiEyeOff, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
@@ -34,10 +34,17 @@ const FoodList = () => {
         ...(filterCategory !== 'all' && { category: filterCategory })
       };
 
+      // const res = await axios.get(`${API_URL}/api/foodItems`, {
+      //   params,
+      //   withCredentials: true,
+      // });
       const res = await axios.get(`${API_URL}/api/foodItems`, {
-        params,
-        withCredentials: true,
-      });
+  params,
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
       setFoods(res.data.foodItems || []);
       setTotalPages(res.data.totalPages || 1);
     } catch (err) {
@@ -59,9 +66,15 @@ const FoodList = () => {
 
   const confirmDelete = async () => {
     try {
+      // await axios.delete(`${API_URL}/api/foodItems/${pendingDeleteId}`, {
+      //   withCredentials: true,
+      // });
       await axios.delete(`${API_URL}/api/foodItems/${pendingDeleteId}`, {
-        withCredentials: true,
-      });
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
       toast.success("Item deleted successfully");
       setShowConfirm(false);
       fetchFoods();
@@ -78,11 +91,22 @@ const FoodList = () => {
 
   const toggleAvailability = async (foodId, currentStatus) => {
     try {
+      // await axios.put(
+      //   `${API_URL}/api/foodItems/${foodId}`,
+      //   { available: !currentStatus },
+      //   { withCredentials: true }
+      // );
+
       await axios.put(
-        `${API_URL}/api/foodItems/${foodId}`,
-        { available: !currentStatus },
-        { withCredentials: true }
-      );
+  `${API_URL}/api/foodItems/${foodId}`,
+  { available: !currentStatus },
+  { 
+    withCredentials: true,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }
+);
       toast.success(`Item ${!currentStatus ? 'activated' : 'deactivated'}`);
       fetchFoods();
     } catch (err) {

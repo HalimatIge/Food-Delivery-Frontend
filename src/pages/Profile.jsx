@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
-import axios from "axios";
+import axios from "../config/axios";
 import { FiUser, FiMail, FiPhone, FiMapPin, FiEdit, FiSave, FiX, FiLock, FiCheck, FiX as FiXIcon } from "react-icons/fi";
 import { toast } from "react-toastify";
 import { API_URL } from '../config/constants';
@@ -108,13 +108,24 @@ export default function UserProfile() {
       }
 
     
+      // const response = await axios.put(
+      //   `${API_URL}/api/auth/update-profile`,
+      //   updateData,
+      //   { 
+      //     withCredentials: true
+      //   }
+      // );
+
       const response = await axios.put(
-        `${API_URL}/api/auth/update-profile`,
-        updateData,
-        { 
-          withCredentials: true
-        }
-      );
+  `${API_URL}/api/auth/update-profile`,
+  updateData,
+  { 
+    withCredentials: true,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }
+);
 
     
 

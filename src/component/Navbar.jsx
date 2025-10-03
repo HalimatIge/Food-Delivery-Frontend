@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../config/axios';
 import { FaBars, FaTimes, FaShoppingCart, FaUser, FaHome } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from "../context/CartContext";
@@ -28,7 +28,13 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      await axios.post(`${API_URL}/api/auth/logout`, {}, { withCredentials: true });
+      await axios.post(`${API_URL}/api/auth/logout`, {},
+         { withCredentials: true ,
+           headers: {
+    'Content-Type': 'application/json'
+  }
+         }
+        );
       setUser(null);
       toast.success('Logged out successfully');
       navigate('/login');
