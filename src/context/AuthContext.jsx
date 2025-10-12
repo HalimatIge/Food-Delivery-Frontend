@@ -36,6 +36,7 @@ export const AuthProvider = ({ children }) => {
         withCredentials: true,
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -43,10 +44,17 @@ export const AuthProvider = ({ children }) => {
         setUser(response.data.user);
       } else {
         setUser(null);
+        localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
       }
     } catch (error) {
-      console.error("Auth check failed:", error.response?.status);
+      if (error.response?.status !== 401) {
+        console.error("Auth check failed:", error.response?.status);
+      }
+
       setUser(null);
+      localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
     } finally {
       setAuthLoading(false);
       setIsInitialized(true);
