@@ -1,10 +1,20 @@
-
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import axios from "../config/axios";
-import { FiUser, FiMail, FiPhone, FiMapPin, FiEdit, FiSave, FiX, FiLock, FiCheck, FiX as FiXIcon } from "react-icons/fi";
+import {
+  FiUser,
+  FiMail,
+  FiPhone,
+  FiMapPin,
+  FiEdit,
+  FiSave,
+  FiX,
+  FiLock,
+  FiCheck,
+  FiX as FiXIcon,
+} from "react-icons/fi";
 import { toast } from "react-toastify";
-import { API_URL } from '../config/constants';
+import { API_URL } from "../config/constants";
 
 export default function UserProfile() {
   const { user, setUser } = useAuth();
@@ -16,14 +26,14 @@ export default function UserProfile() {
     address: "",
     currentPassword: "",
     newPassword: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
   const [loading, setLoading] = useState(false);
   const [passwordRequirements, setPasswordRequirements] = useState({
     minLength: false,
     hasUpperCase: false,
     hasNumber: false,
-    hasSpecialChar: false
+    hasSpecialChar: false,
   });
 
   // Password validation function (same as registration)
@@ -32,28 +42,31 @@ export default function UserProfile() {
       minLength: password.length >= 8,
       hasUpperCase: /[A-Z]/.test(password),
       hasNumber: /\d/.test(password),
-      hasSpecialChar: /[!@#$%^&*]/.test(password)
+      hasSpecialChar: /[!@#$%^&*]/.test(password),
     };
-    
+
     setPasswordRequirements(requirements);
-    
-    return requirements.minLength && 
-           requirements.hasUpperCase && 
-           requirements.hasNumber && 
-           requirements.hasSpecialChar;
+
+    return (
+      requirements.minLength &&
+      requirements.hasUpperCase &&
+      requirements.hasNumber &&
+      requirements.hasSpecialChar
+    );
   };
 
   useEffect(() => {
     if (user) {
-      const fullName = user.name || `${user.firstname || ''} ${user.lastname || ''}`.trim();
-      
+      const fullName =
+        user.name || `${user.firstname || ""} ${user.lastname || ""}`.trim();
+
       setFormData({
         name: fullName,
         phone: user.phone || "",
         address: user.address || "",
         currentPassword: "",
         newPassword: "",
-        confirmPassword: ""
+        confirmPassword: "",
       });
     }
   }, [user]);
@@ -63,7 +76,7 @@ export default function UserProfile() {
     setFormData({ ...formData, [name]: value });
 
     // Validate password in real-time when newPassword changes
-    if (name === 'newPassword') {
+    if (name === "newPassword") {
       validatePassword(value);
     }
   };
@@ -72,9 +85,6 @@ export default function UserProfile() {
     e.preventDefault();
     setLoading(true);
 
-  
-
-    // Validate passwords if changing password
     if (showPasswordFields) {
       if (!formData.currentPassword) {
         toast.error("Please enter your current password");
@@ -99,68 +109,69 @@ export default function UserProfile() {
       const updateData = {
         name: formData.name,
         phone: formData.phone,
-        address: formData.address
+        address: formData.address,
       };
 
-      if (showPasswordFields && formData.currentPassword && formData.newPassword) {
+      if (
+        showPasswordFields &&
+        formData.currentPassword &&
+        formData.newPassword
+      ) {
         updateData.currentPassword = formData.currentPassword;
         updateData.newPassword = formData.newPassword;
       }
 
-    
       // const response = await axios.put(
       //   `${API_URL}/api/auth/update-profile`,
       //   updateData,
-      //   { 
+      //   {
       //     withCredentials: true
       //   }
       // );
 
       const response = await axios.put(
-  `${API_URL}/api/auth/update-profile`,
-  updateData,
-  { 
-    withCredentials: true,
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  }
-);
-
-    
+        `${API_URL}/api/auth/update-profile`,
+        updateData,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response.data.success) {
         setUser(response.data.user);
-        
-        setFormData(prev => ({
+
+        setFormData((prev) => ({
           ...prev,
-          name: response.data.user.name || response.data.user.firstname + ' ' + response.data.user.lastname,
+          name:
+            response.data.user.name ||
+            response.data.user.firstname + " " + response.data.user.lastname,
           phone: response.data.user.phone || "",
           address: response.data.user.address || "",
           currentPassword: "",
           newPassword: "",
-          confirmPassword: ""
+          confirmPassword: "",
         }));
 
-        // Reset password requirements
         setPasswordRequirements({
           minLength: false,
           hasUpperCase: false,
           hasNumber: false,
-          hasSpecialChar: false
+          hasSpecialChar: false,
         });
 
         toast.success("Profile updated successfully!");
         setIsEditing(false);
         setShowPasswordFields(false);
-        
       } else {
         toast.error(response.data.message || "Failed to update profile");
       }
     } catch (err) {
       console.error("❌ Profile update error:", err);
       console.error("Error details:", err.response?.data);
-      
+
       if (err.response?.status === 400) {
         toast.error(err.response.data.message || "Invalid data provided");
       } else if (err.response?.status === 401) {
@@ -176,22 +187,60 @@ export default function UserProfile() {
   // Password requirement component
   const PasswordRequirements = () => (
     <div className="mt-2 p-3 bg-gray-50 rounded-lg">
-      <p className="text-sm font-medium text-gray-700 mb-2">Password must contain:</p>
+      <p className="text-sm font-medium text-gray-700 mb-2">
+        Password must contain:
+      </p>
       <div className="space-y-1">
-        <div className={`flex items-center text-sm ${passwordRequirements.minLength ? 'text-green-600' : 'text-gray-500'}`}>
-          {passwordRequirements.minLength ? <FiCheck className="mr-2" /> : <FiXIcon className="mr-2" />}
+        <div
+          className={`flex items-center text-sm ${
+            passwordRequirements.minLength ? "text-green-600" : "text-gray-500"
+          }`}
+        >
+          {passwordRequirements.minLength ? (
+            <FiCheck className="mr-2" />
+          ) : (
+            <FiXIcon className="mr-2" />
+          )}
           At least 8 characters
         </div>
-        <div className={`flex items-center text-sm ${passwordRequirements.hasUpperCase ? 'text-green-600' : 'text-gray-500'}`}>
-          {passwordRequirements.hasUpperCase ? <FiCheck className="mr-2" /> : <FiXIcon className="mr-2" />}
+        <div
+          className={`flex items-center text-sm ${
+            passwordRequirements.hasUpperCase
+              ? "text-green-600"
+              : "text-gray-500"
+          }`}
+        >
+          {passwordRequirements.hasUpperCase ? (
+            <FiCheck className="mr-2" />
+          ) : (
+            <FiXIcon className="mr-2" />
+          )}
           One uppercase letter (A-Z)
         </div>
-        <div className={`flex items-center text-sm ${passwordRequirements.hasNumber ? 'text-green-600' : 'text-gray-500'}`}>
-          {passwordRequirements.hasNumber ? <FiCheck className="mr-2" /> : <FiXIcon className="mr-2" />}
+        <div
+          className={`flex items-center text-sm ${
+            passwordRequirements.hasNumber ? "text-green-600" : "text-gray-500"
+          }`}
+        >
+          {passwordRequirements.hasNumber ? (
+            <FiCheck className="mr-2" />
+          ) : (
+            <FiXIcon className="mr-2" />
+          )}
           One number (0-9)
         </div>
-        <div className={`flex items-center text-sm ${passwordRequirements.hasSpecialChar ? 'text-green-600' : 'text-gray-500'}`}>
-          {passwordRequirements.hasSpecialChar ? <FiCheck className="mr-2" /> : <FiXIcon className="mr-2" />}
+        <div
+          className={`flex items-center text-sm ${
+            passwordRequirements.hasSpecialChar
+              ? "text-green-600"
+              : "text-gray-500"
+          }`}
+        >
+          {passwordRequirements.hasSpecialChar ? (
+            <FiCheck className="mr-2" />
+          ) : (
+            <FiXIcon className="mr-2" />
+          )}
           One special character (!@#$%^&*)
         </div>
       </div>
@@ -207,9 +256,9 @@ export default function UserProfile() {
             <div className="absolute -bottom-16 left-8">
               <div className="w-32 h-32 rounded-full border-4 border-white bg-white flex items-center justify-center overflow-hidden">
                 {user?.profileImage ? (
-                  <img 
-                    src={user.profileImage} 
-                    alt="Profile" 
+                  <img
+                    src={user.profileImage}
+                    alt="Profile"
                     className="w-full h-full object-cover"
                   />
                 ) : (
@@ -242,18 +291,20 @@ export default function UserProfile() {
                         minLength: false,
                         hasUpperCase: false,
                         hasNumber: false,
-                        hasSpecialChar: false
+                        hasSpecialChar: false,
                       });
                       // Reset form to current user data
-                      const fullName = user.name || `${user.firstname || ''} ${user.lastname || ''}`.trim();
-                      setFormData(prev => ({
+                      const fullName =
+                        user.name ||
+                        `${user.firstname || ""} ${user.lastname || ""}`.trim();
+                      setFormData((prev) => ({
                         ...prev,
                         name: fullName,
                         phone: user.phone || "",
                         address: user.address || "",
                         currentPassword: "",
                         newPassword: "",
-                        confirmPassword: ""
+                        confirmPassword: "",
                       }));
                     }}
                     className="flex items-center text-gray-500 hover:text-gray-700"
@@ -268,7 +319,10 @@ export default function UserProfile() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 {/* Full Name */}
                 <div className="md:col-span-2">
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="name"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Full Name
                   </label>
                   <div className="relative">
@@ -282,7 +336,9 @@ export default function UserProfile() {
                       value={formData.name}
                       onChange={handleChange}
                       className={`w-full pl-10 pr-4 py-3 rounded-lg border ${
-                        isEditing ? "border-gray-300" : "border-transparent bg-gray-50"
+                        isEditing
+                          ? "border-gray-300"
+                          : "border-transparent bg-gray-50"
                       } focus:ring-2 focus:ring-[#FF4C29] focus:border-transparent transition-all duration-200`}
                       required
                       disabled={!isEditing}
@@ -292,7 +348,10 @@ export default function UserProfile() {
 
                 {/* Email (Read-only) */}
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Email
                   </label>
                   <div className="relative">
@@ -311,7 +370,10 @@ export default function UserProfile() {
 
                 {/* Phone */}
                 <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="phone"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Phone Number
                   </label>
                   <div className="relative">
@@ -325,7 +387,9 @@ export default function UserProfile() {
                       value={formData.phone}
                       onChange={handleChange}
                       className={`w-full pl-10 pr-4 py-3 rounded-lg border ${
-                        isEditing ? "border-gray-300" : "border-transparent bg-gray-50"
+                        isEditing
+                          ? "border-gray-300"
+                          : "border-transparent bg-gray-50"
                       } focus:ring-2 focus:ring-[#FF4C29] focus:border-transparent transition-all duration-200`}
                       disabled={!isEditing}
                     />
@@ -334,7 +398,10 @@ export default function UserProfile() {
 
                 {/* Address */}
                 <div className="md:col-span-2">
-                  <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="address"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
                     Delivery Address
                   </label>
                   <div className="relative">
@@ -348,7 +415,9 @@ export default function UserProfile() {
                       value={formData.address}
                       onChange={handleChange}
                       className={`w-full pl-10 pr-4 py-3 rounded-lg border ${
-                        isEditing ? "border-gray-300" : "border-transparent bg-gray-50"
+                        isEditing
+                          ? "border-gray-300"
+                          : "border-transparent bg-gray-50"
                       } focus:ring-2 focus:ring-[#FF4C29] focus:border-transparent transition-all duration-200`}
                       disabled={!isEditing}
                     />
@@ -369,20 +438,25 @@ export default function UserProfile() {
                           minLength: false,
                           hasUpperCase: false,
                           hasNumber: false,
-                          hasSpecialChar: false
+                          hasSpecialChar: false,
                         });
                       }
                     }}
                     className="flex items-center text-[#FF4C29] hover:text-[#FF7B54] transition-colors mb-4"
                   >
                     <FiLock className="mr-2" />
-                    {showPasswordFields ? "Cancel Password Change" : "Change Password"}
+                    {showPasswordFields
+                      ? "Cancel Password Change"
+                      : "Change Password"}
                   </button>
 
                   {showPasswordFields && (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
                       <div>
-                        <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label
+                          htmlFor="currentPassword"
+                          className="block text-sm font-medium text-gray-700 mb-1"
+                        >
                           Current Password
                         </label>
                         <input
@@ -396,7 +470,10 @@ export default function UserProfile() {
                         />
                       </div>
                       <div className="md:col-span-2">
-                        <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label
+                          htmlFor="newPassword"
+                          className="block text-sm font-medium text-gray-700 mb-1"
+                        >
                           New Password
                         </label>
                         <input
@@ -412,7 +489,10 @@ export default function UserProfile() {
                         {formData.newPassword && <PasswordRequirements />}
                       </div>
                       <div className="md:col-span-2">
-                        <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                        <label
+                          htmlFor="confirmPassword"
+                          className="block text-sm font-medium text-gray-700 mb-1"
+                        >
                           Confirm New Password
                         </label>
                         <input
@@ -426,15 +506,23 @@ export default function UserProfile() {
                         />
                         {/* Show match status */}
                         {formData.newPassword && formData.confirmPassword && (
-                          <div className={`mt-2 flex items-center text-sm ${
-                            formData.newPassword === formData.confirmPassword ? 'text-green-600' : 'text-red-600'
-                          }`}>
-                            {formData.newPassword === formData.confirmPassword ? (
+                          <div
+                            className={`mt-2 flex items-center text-sm ${
+                              formData.newPassword === formData.confirmPassword
+                                ? "text-green-600"
+                                : "text-red-600"
+                            }`}
+                          >
+                            {formData.newPassword ===
+                            formData.confirmPassword ? (
                               <FiCheck className="mr-2" />
                             ) : (
                               <FiXIcon className="mr-2" />
                             )}
-                            Passwords {formData.newPassword === formData.confirmPassword ? 'match' : 'do not match'}
+                            Passwords{" "}
+                            {formData.newPassword === formData.confirmPassword
+                              ? "match"
+                              : "do not match"}
                           </div>
                         )}
                       </div>
@@ -454,9 +542,25 @@ export default function UserProfile() {
                   >
                     {loading ? (
                       <>
-                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        <svg
+                          className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
                         </svg>
                         Saving...
                       </>
@@ -475,4 +579,3 @@ export default function UserProfile() {
     </div>
   );
 }
-
